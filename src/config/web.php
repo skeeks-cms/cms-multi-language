@@ -8,7 +8,7 @@
 return [
     'components' => [
         'multiLanguage' => [
-            'class' => \skeeks\yii2\multiLanguage\MultiLangComponent::class
+            'class' => \skeeks\cms\multiLanguage\MultiLangComponent::class
         ],
 
         'request' => [
