@@ -7,6 +7,19 @@
  */
 return [
     'components' => [
+
+        'i18n' => [
+            'translations' => [
+                'skeeks/multi-lang/langs' => [
+                    'class'    => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@skeeks/cms/multiLanguage/messages',
+                    'fileMap'  => [
+                        'skeeks/multi-lang/langs' => 'langs.php',
+                    ],
+                ],
+            ],
+        ],
+
         'urlManager' => [
             'class' => \skeeks\yii2\multiLanguage\MultiLangUrlManager::class,
         ]
