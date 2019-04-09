@@ -36,6 +36,7 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
         parent::init();
 
         if ($this->cmsLangs) {
+            $this->langs = [];
             foreach ($this->cmsLangs as $cmsLang)
             {
                 if ($cmsLang->is_default) {
@@ -47,60 +48,6 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
         }
     }
 
-    protected $_possible_fields_for_elements = null;
-
-    public function getLangFielsForElement(CmsContentElement $model)
-    {
-        if ($this->_possible_fields_for_elements === null) {
-            $fields = [];
-            /**
-             * @var CmsContentProperty $property
-             */
-            $allowAttributes = array_keys($model->toArray());
-            foreach (CmsContentProperty::find()->all() as $property)
-            {
-                if ($property->code)
-                {
-                    if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
-                        $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
-                        $fields[] = $fieldName;
-                    }
-                }
-
-            }
-
-            $this->_possible_fields_for_elements = $fields;
-        }
-        return $this->_possible_fields_for_elements;
-    }
-
-    protected $_possible_fields_for_tree = null;
-
-    public function getLangFielsForTree(Tree $model)
-    {
-        if ($this->_possible_fields_for_tree === null) {
-            $fields = [];
-            /**
-             * @var CmsTreeTypeProperty $property
-             */
-            $allowAttributes = array_keys($model->toArray());
-            foreach (CmsTreeTypeProperty::find()->all() as $property)
-            {
-                if ($property->code)
-                {
-                    if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
-
-                        $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
-                        $fields[] = $fieldName;
-                    }
-                }
-
-            }
-
-            $this->_possible_fields_for_tree = $fields;
-        }
-        return $this->_possible_fields_for_tree;
-    }
 
     public function bootstrap($application)
     {
@@ -118,7 +65,7 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
                 return true;
             }
 
-            $fields = $this->getLangFielsForTree($model);
+            $fields = $this->_getLangFielsForTree($model);
             if (!$fields) {
                 return true;
             }
@@ -145,7 +92,7 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
                 return true;
             }
 
-            $fields = $this->getLangFielsForElement($model);
+            $fields = $this->_getLangFielsForElement($model);
             if (!$fields) {
                 return true;
             }
@@ -157,6 +104,8 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
                 }
             }
         });
+
+        return parent::bootstrap($application);
     }
 
     /**
@@ -193,5 +142,63 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
         return $this->_cms_langs;
     }
 
+
+
+
+
+    protected $_possible_fields_for_elements = null;
+
+    protected function _getLangFielsForElement(CmsContentElement $model)
+    {
+        if ($this->_possible_fields_for_elements === null) {
+            $fields = [];
+            /**
+             * @var CmsContentProperty $property
+             */
+            $allowAttributes = array_keys($model->toArray());
+            foreach (CmsContentProperty::find()->all() as $property)
+            {
+                if ($property->code)
+                {
+                    if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
+                        $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
+                        $fields[] = $fieldName;
+                    }
+                }
+
+            }
+
+            $this->_possible_fields_for_elements = $fields;
+        }
+        return $this->_possible_fields_for_elements;
+    }
+
+    protected $_possible_fields_for_tree = null;
+
+    public function _getLangFielsForTree(Tree $model)
+    {
+        if ($this->_possible_fields_for_tree === null) {
+            $fields = [];
+            /**
+             * @var CmsTreeTypeProperty $property
+             */
+            $allowAttributes = array_keys($model->toArray());
+            foreach (CmsTreeTypeProperty::find()->all() as $property)
+            {
+                if ($property->code)
+                {
+                    if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
+
+                        $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
+                        $fields[] = $fieldName;
+                    }
+                }
+
+            }
+
+            $this->_possible_fields_for_tree = $fields;
+        }
+        return $this->_possible_fields_for_tree;
+    }
 
 }

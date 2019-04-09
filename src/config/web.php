@@ -10,11 +10,11 @@ return [
 
     'components' => [
         'multiLanguage' => [
-            'class' => \skeeks\cms\multiLanguage\MultiLangComponent::class
+            'class' => \skeeks\cms\multiLanguage\MultiLangComponent::class,
         ],
 
         'request' => [
-            'class'               => \skeeks\yii2\multiLanguage\MultiLangRequest::class
-        ]
-    ]
+            'class' => \skeeks\yii2\multiLanguage\MultiLangRequest::class,
+        ],
+    ],
 ];
