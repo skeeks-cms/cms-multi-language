@@ -6,6 +6,8 @@
  * @author Semenov Alexander <semenov@skeeks.com>
  */
 return [
+    'bootstrap' => ['multiLanguage'],
+
     'components' => [
         'multiLanguage' => [
             'class' => \skeeks\cms\multiLanguage\MultiLangComponent::class

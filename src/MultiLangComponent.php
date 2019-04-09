@@ -8,14 +8,25 @@
 
 namespace skeeks\cms\multiLanguage;
 
-
+use skeeks\cms\backend\BackendComponent;
+use skeeks\cms\models\CmsContentElement;
+use skeeks\cms\models\CmsContentElementProperty;
+use skeeks\cms\models\CmsContentProperty;
+use skeeks\cms\models\CmsContentPropertyEnum;
 use skeeks\cms\models\CmsLang;
+use skeeks\cms\models\CmsTreeType;
+use skeeks\cms\models\CmsTreeTypeProperty;
+use skeeks\cms\models\Tree;
+use yii\base\BootstrapInterface;
+use yii\base\Event;
+
 /**
  * @property CmsLang[] $cmsLangs
+ * @property string $langPrefix
  *
  * @author Semenov Alexander <semenov@skeeks.com>
  */
-class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent
+class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent implements BootstrapInterface
 {
     /**
      *
@@ -36,6 +47,117 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent
         }
     }
 
+    protected $_possible_fields_for_elements = null;
+
+    public function getLangFielsForElement(CmsContentElement $model)
+    {
+        if ($this->_possible_fields_for_elements === null) {
+            $fields = [];
+            /**
+             * @var CmsContentProperty $property
+             */
+            $allowAttributes = array_keys($model->toArray());
+            foreach (CmsContentProperty::find()->all() as $property)
+            {
+                if ($property->code)
+                {
+                    if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
+                        $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
+                        $fields[] = $fieldName;
+                    }
+                }
+
+            }
+
+            $this->_possible_fields_for_elements = $fields;
+        }
+        return $this->_possible_fields_for_elements;
+    }
+
+    protected $_possible_fields_for_tree = null;
+
+    public function getLangFielsForTree(Tree $model)
+    {
+        if ($this->_possible_fields_for_tree === null) {
+            $fields = [];
+            /**
+             * @var CmsTreeTypeProperty $property
+             */
+            $allowAttributes = array_keys($model->toArray());
+            foreach (CmsTreeTypeProperty::find()->all() as $property)
+            {
+                if ($property->code)
+                {
+                    if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
+
+                        $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
+                        $fields[] = $fieldName;
+                    }
+                }
+
+            }
+
+            $this->_possible_fields_for_tree = $fields;
+        }
+        return $this->_possible_fields_for_tree;
+    }
+
+    public function bootstrap($application)
+    {
+        Event::on(Tree::class, Tree::EVENT_AFTER_FIND, function (Event $e) {
+            /**
+             * @var $model Tree
+             */
+            $model = $e->sender;
+
+            if (BackendComponent::getCurrent()) {
+                return true;
+            }
+
+            if (\Yii::$app->language == \Yii::$app->multiLanguage->default_lang) {
+                return true;
+            }
+
+            $fields = $this->getLangFielsForTree($model);
+            if (!$fields) {
+                return true;
+            }
+
+            foreach ($model->toArray($fields) as $key => $value)
+            {
+                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix . $key)) {
+                    $model->{$key} = $value;
+                }
+            }
+        });
+
+        Event::on(CmsContentElement::class, CmsContentElement::EVENT_AFTER_FIND, function (Event $e) {
+            /**
+             * @var $model Tree
+             */
+            $model = $e->sender;
+
+            if (BackendComponent::getCurrent()) {
+                return true;
+            }
+
+            if (\Yii::$app->language == \Yii::$app->multiLanguage->default_lang) {
+                return true;
+            }
+
+            $fields = $this->getLangFielsForElement($model);
+            if (!$fields) {
+                return true;
+            }
+
+            foreach ($model->toArray($fields) as $key => $value)
+            {
+                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix . $key)) {
+                    $model->{$key} = $value;
+                }
+            }
+        });
+    }
 
     /**
      * Объекты языков проекта.
@@ -43,6 +165,19 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent
      * @var CmsLang[]
      */
     protected $_cms_langs = null;
+
+    /**
+     * @var string Разделитель кода языка от названия свойтва
+     */
+    public $lang_delimetr = "__";
+
+    /**
+     * @return string
+     */
+    public function getLangPrefix()
+    {
+        return \Yii::$app->language . $this->lang_delimetr;
+    }
 
     /**
      * Объекты языков проекта.
