@@ -10,11 +10,12 @@ return [
 
         'i18n' => [
             'translations' => [
-                'skeeks/multi-lang/langs' => [
+                'skeeks/multi-lang/*' => [
                     'class'    => 'yii\i18n\PhpMessageSource',
                     'basePath' => '@skeeks/cms/multiLanguage/messages',
                     'fileMap'  => [
                         'skeeks/multi-lang/langs' => 'langs.php',
+                        'skeeks/multi-lang/main' => 'main.php',
                     ],
                 ],
             ],
