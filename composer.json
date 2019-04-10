@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "^2.0.17 || dev-master",
+        "skeeks/cms": "^5.5.3 || dev-master",
         "skeeks/yii2-multi-language": "dev-master"
     },
     "autoload": {
