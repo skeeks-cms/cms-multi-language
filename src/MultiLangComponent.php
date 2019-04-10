@@ -10,24 +10,29 @@ namespace skeeks\cms\multiLanguage;
 
 use skeeks\cms\backend\BackendComponent;
 use skeeks\cms\models\CmsContentElement;
-use skeeks\cms\models\CmsContentElementProperty;
 use skeeks\cms\models\CmsContentProperty;
-use skeeks\cms\models\CmsContentPropertyEnum;
 use skeeks\cms\models\CmsLang;
-use skeeks\cms\models\CmsTreeType;
 use skeeks\cms\models\CmsTreeTypeProperty;
 use skeeks\cms\models\Tree;
+use skeeks\cms\multiLanguage\widgets\detectLanguage\DetectLanguage;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
+use yii\web\Application;
+use yii\web\View;
 
 /**
  * @property CmsLang[] $cmsLangs
- * @property string $langPrefix
+ * @property string    $langPrefix
  *
  * @author Semenov Alexander <semenov@skeeks.com>
  */
 class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent implements BootstrapInterface
 {
+    /**
+     * @var Подключить скрипт автоопределения языка пользователя?
+     */
+    public $isRenderDetectWidget = true;
+
     /**
      *
      */
@@ -37,8 +42,7 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
 
         if ($this->cmsLangs) {
             $this->langs = [];
-            foreach ($this->cmsLangs as $cmsLang)
-            {
+            foreach ($this->cmsLangs as $cmsLang) {
                 if ($cmsLang->is_default) {
                     $this->default_lang = $cmsLang->code;
                 }
@@ -70,9 +74,8 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
                 return true;
             }
 
-            foreach ($model->toArray($fields) as $key => $value)
-            {
-                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix . $key)) {
+            foreach ($model->toArray($fields) as $key => $value) {
+                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix.$key)) {
                     $model->{$key} = $value;
                 }
             }
@@ -97,13 +100,21 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
                 return true;
             }
 
-            foreach ($model->toArray($fields) as $key => $value)
-            {
-                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix . $key)) {
+            foreach ($model->toArray($fields) as $key => $value) {
+                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix.$key)) {
                     $model->{$key} = $value;
                 }
             }
         });
+
+
+        if ($application instanceof Application) {
+            $application->view->on(View::EVENT_END_BODY, function (Event $e) {
+                if ($this->isRenderDetectWidget) {
+                    echo DetectLanguage::widget();
+                }
+            });
+        }
 
         return parent::bootstrap($application);
     }
@@ -125,7 +136,7 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
      */
     public function getLangPrefix()
     {
-        return \Yii::$app->language . $this->lang_delimetr;
+        return \Yii::$app->language.$this->lang_delimetr;
     }
 
     /**
@@ -143,9 +154,6 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
     }
 
 
-
-
-
     protected $_possible_fields_for_elements = null;
 
     protected function _getLangFielsForElement(CmsContentElement $model)
@@ -156,10 +164,8 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
              * @var CmsContentProperty $property
              */
             $allowAttributes = array_keys($model->toArray());
-            foreach (CmsContentProperty::find()->all() as $property)
-            {
-                if ($property->code)
-                {
+            foreach (CmsContentProperty::find()->all() as $property) {
+                if ($property->code) {
                     if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
                         $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
                         $fields[] = $fieldName;
@@ -183,10 +189,8 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
              * @var CmsTreeTypeProperty $property
              */
             $allowAttributes = array_keys($model->toArray());
-            foreach (CmsTreeTypeProperty::find()->all() as $property)
-            {
-                if ($property->code)
-                {
+            foreach (CmsTreeTypeProperty::find()->all() as $property) {
+                if ($property->code) {
                     if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
 
                         $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
