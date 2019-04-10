@@ -15,6 +15,7 @@ use skeeks\cms\models\CmsLang;
 use skeeks\cms\models\CmsTreeTypeProperty;
 use skeeks\cms\models\Tree;
 use skeeks\cms\multiLanguage\widgets\detectLanguage\DetectLanguage;
+use skeeks\modules\cms\form2\models\Form2FormProperty;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
 use yii\web\Application;
@@ -55,6 +56,20 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
 
     public function bootstrap($application)
     {
+        if (class_exists(Form2FormProperty::class)) {
+            Event::on(Form2FormProperty::class, Form2FormProperty::EVENT_AFTER_FIND, function (Event $e) {
+                if (BackendComponent::getCurrent()) {
+                    return true;
+                }
+
+                /**
+                 * @var $model Form2FormProperty
+                 */
+                $model = $e->sender;
+                $model->name = \Yii::t('app', $model->name);
+            });
+        }
+
         Event::on(Tree::class, Tree::EVENT_AFTER_FIND, function (Event $e) {
             /**
              * @var $model Tree
