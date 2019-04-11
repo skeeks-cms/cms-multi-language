@@ -17,6 +17,7 @@ use skeeks\cms\models\Tree;
 use skeeks\cms\multiLanguage\widgets\detectLanguage\DetectLanguage;
 use skeeks\modules\cms\form2\models\Form2FormProperty;
 use yii\base\BootstrapInterface;
+use yii\base\Component;
 use yii\base\Event;
 use yii\web\Application;
 use yii\web\View;
@@ -58,6 +59,7 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
     {
         if (class_exists(Form2FormProperty::class)) {
             Event::on(Form2FormProperty::class, Form2FormProperty::EVENT_AFTER_FIND, function (Event $e) {
+                $e->handled = false;
                 if (BackendComponent::getCurrent()) {
                     return true;
                 }
@@ -130,6 +132,8 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
                 }
             });
         }
+
+
 
         return parent::bootstrap($application);
     }
