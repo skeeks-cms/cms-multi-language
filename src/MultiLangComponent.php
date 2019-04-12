@@ -45,13 +45,11 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
         if ($this->cmsLangs) {
             $this->langs = [];
             foreach ($this->cmsLangs as $cmsLang) {
-                if ($cmsLang->is_default) {
-                    $this->default_lang = $cmsLang->code;
-                }
-
                 $this->langs[] = $cmsLang->code;
             }
         }
+
+        $this->default_lang = \Yii::$app->cms->languageCode;
     }
 
 
