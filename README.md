@@ -27,6 +27,27 @@ Or add this to your `composer.json` file:
 Use config your application
 -----
 
+Widget Choose your language
+
+```php
+<? $modal = \yii\bootstrap\Modal::begin([
+        'id' => 'sx-lang-modal',
+    'header' => \Yii::t('skeeks/multi-lang/main', 'Choose your language'),
+    'footer' => '<button type="button" class="btn btn-default" data-dismiss="modal">
+        '.\Yii::t('skeeks/multi-lang/main', 'Close').'
+    </button>',
+]); ?>
+    <?= \skeeks\cms\multiLanguage\widgets\LangsList::widget(); ?>
+<? $modal::end(); ?>
+
+<?= \skeeks\cms\multiLanguage\widgets\CurrentLangButton::widget([
+    'options' => [
+        'data-toggle' => 'modal',
+        'data-target' => '#sx-lang-modal'
+    ]
+]); ?>
+```
+
 Example
 -----
 ```php
