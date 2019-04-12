@@ -18,8 +18,8 @@
         }
     ],
     "require": {
-        "skeeks/cms": "^5.5.3 || dev-master",
-        "skeeks/yii2-multi-language": "dev-master"
+        "skeeks/cms": "^5.5.4.1 || dev-master",
+        "skeeks/yii2-multi-language": "^1.0.0"
     },
     "autoload": {
         "psr-4": {
