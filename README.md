@@ -55,6 +55,16 @@ Example
 Url::to(['/module/controller/action', 'id' => 20, 'lang' => 'en'])
 // /en/module/controller/action?id=20
 
+Auto translate
+-----
+
+```sh
+php yii multi-lang/translate/content-elements
+php yii multi-lang/translate/tree
+php yii multi-lang/translate/messages
+```
+
+
 ```
 Screenshot
 ----------
