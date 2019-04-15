@@ -20,9 +20,5 @@ return [
                 ],
             ],
         ],
-
-        'urlManager' => [
-            'class' => \skeeks\yii2\multiLanguage\MultiLangUrlManager::class,
-        ]
     ]
 ];

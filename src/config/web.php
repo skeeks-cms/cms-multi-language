@@ -9,6 +9,10 @@ return [
     'bootstrap' => ['multiLanguage'],
 
     'components' => [
+        'urlManager' => [
+            'class' => \skeeks\yii2\multiLanguage\MultiLangUrlManager::class,
+        ],
+
         'multiLanguage' => [
             'class' => \skeeks\cms\multiLanguage\MultiLangComponent::class,
         ],

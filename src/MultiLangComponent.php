@@ -17,7 +17,6 @@ use skeeks\cms\models\Tree;
 use skeeks\cms\multiLanguage\widgets\detectLanguage\DetectLanguage;
 use skeeks\modules\cms\form2\models\Form2FormProperty;
 use yii\base\BootstrapInterface;
-use yii\base\Component;
 use yii\base\Event;
 use yii\web\Application;
 use yii\web\View;
@@ -55,82 +54,81 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
 
     public function bootstrap($application)
     {
-        if (class_exists(Form2FormProperty::class)) {
-            Event::on(Form2FormProperty::class, Form2FormProperty::EVENT_AFTER_FIND, function (Event $e) {
-                $e->handled = false;
+        if ($application instanceof Application) {
+
+            if (class_exists(Form2FormProperty::class)) {
+                Event::on(Form2FormProperty::class, Form2FormProperty::EVENT_AFTER_FIND, function (Event $e) {
+                    $e->handled = false;
+                    if (BackendComponent::getCurrent()) {
+                        return true;
+                    }
+
+                    /**
+                     * @var $model Form2FormProperty
+                     */
+                    $model = $e->sender;
+                    $model->name = \Yii::t('app', $model->name);
+                });
+            }
+
+            Event::on(Tree::class, Tree::EVENT_AFTER_FIND, function (Event $e) {
+                /**
+                 * @var $model Tree
+                 */
+                $model = $e->sender;
+
                 if (BackendComponent::getCurrent()) {
                     return true;
                 }
 
+                if (\Yii::$app->language == $this->default_lang) {
+                    return true;
+                }
+
+                $fields = $this->_getLangFielsForTree($model);
+                if (!$fields) {
+                    return true;
+                }
+
+                foreach ($model->toArray($fields) as $key => $value) {
+                    if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix.$key)) {
+                        $model->{$key} = $value;
+                    }
+                }
+            });
+
+            Event::on(CmsContentElement::class, CmsContentElement::EVENT_AFTER_FIND, function (Event $e) {
                 /**
-                 * @var $model Form2FormProperty
+                 * @var $model Tree
                  */
                 $model = $e->sender;
-                $model->name = \Yii::t('app', $model->name);
+
+                if (BackendComponent::getCurrent()) {
+                    return true;
+                }
+
+                if (\Yii::$app->language == $this->default_lang) {
+                    return true;
+                }
+
+                $fields = $this->_getLangFielsForElement($model);
+                if (!$fields) {
+                    return true;
+                }
+
+                foreach ($model->toArray($fields) as $key => $value) {
+                    if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix.$key)) {
+                        $model->{$key} = $value;
+                    }
+                }
             });
-        }
 
-        Event::on(Tree::class, Tree::EVENT_AFTER_FIND, function (Event $e) {
-            /**
-             * @var $model Tree
-             */
-            $model = $e->sender;
-
-            if (BackendComponent::getCurrent()) {
-                return true;
-            }
-
-            if (\Yii::$app->language == \Yii::$app->multiLanguage->default_lang) {
-                return true;
-            }
-
-            $fields = $this->_getLangFielsForTree($model);
-            if (!$fields) {
-                return true;
-            }
-
-            foreach ($model->toArray($fields) as $key => $value) {
-                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix.$key)) {
-                    $model->{$key} = $value;
-                }
-            }
-        });
-
-        Event::on(CmsContentElement::class, CmsContentElement::EVENT_AFTER_FIND, function (Event $e) {
-            /**
-             * @var $model Tree
-             */
-            $model = $e->sender;
-
-            if (BackendComponent::getCurrent()) {
-                return true;
-            }
-
-            if (\Yii::$app->language == \Yii::$app->multiLanguage->default_lang) {
-                return true;
-            }
-
-            $fields = $this->_getLangFielsForElement($model);
-            if (!$fields) {
-                return true;
-            }
-
-            foreach ($model->toArray($fields) as $key => $value) {
-                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix.$key)) {
-                    $model->{$key} = $value;
-                }
-            }
-        });
-
-
-        if ($application instanceof Application) {
             $application->view->on(View::EVENT_END_BODY, function (Event $e) {
                 if ($this->isRenderDetectWidget) {
                     echo DetectLanguage::widget();
                 }
             });
         }
-
 
 
         return parent::bootstrap($application);
