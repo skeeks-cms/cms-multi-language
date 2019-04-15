@@ -1,7 +1,7 @@
 Component for multilingual site on SkeekS CMS
 ================
 
-[<img src="https://skeeks.com/uploads/all/4c/fd/50/4cfd50a535aef7c753b12c4adfbc0e33.png" alt="SkeekS blog" width="200"/>](https://skeeks.com/blog/programming/397-kak-preobrazovat-neaktivnye-ssylki-v-tekste-v-aktivnye-klikabelnye)
+[<img src="https://cms.skeeks.com/uploads/all/29/f5/4c/29f54c4158650aaf265a69d37fb6e86c.jpeg" alt="SkeekS blog" width="200"/>](https://cms.skeeks.com/marketplace/components/tools/406-skeeks-komponent-dlya-multiyazychnosti-sajta)
 
 [![Latest Stable Version](https://poser.pugx.org/skeeks/cms-multi-language/v/stable.png)](https://packagist.org/packages/skeeks/cms-multi-language)
 [![Total Downloads](https://poser.pugx.org/skeeks/cms-multi-language/downloads.png)](https://packagist.org/packages/skeeks/cms-multi-language)
