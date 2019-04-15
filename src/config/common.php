@@ -8,6 +8,10 @@
 return [
     'components' => [
 
+        'multiLanguage' => [
+            'class' => \skeeks\cms\multiLanguage\MultiLangComponent::class,
+        ],
+
         'i18n' => [
             'translations' => [
                 'skeeks/multi-lang/*' => [

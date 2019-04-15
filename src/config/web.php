@@ -13,10 +13,6 @@ return [
             'class' => \skeeks\yii2\multiLanguage\MultiLangUrlManager::class,
         ],
 
-        'multiLanguage' => [
-            'class' => \skeeks\cms\multiLanguage\MultiLangComponent::class,
-        ],
-
         'request' => [
             'class' => \skeeks\yii2\multiLanguage\MultiLangRequest::class,
         ],

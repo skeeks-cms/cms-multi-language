@@ -7,7 +7,7 @@
  */
 return [
     'modules' => [
-        'multiLang' => [
+        'multi-lang' => [
             'class' => \skeeks\cms\multiLanguage\MultiLangModule::class,
             'controllerNamespace' => 'skeeks\cms\multiLanguage\console\controllers'
         ]
