@@ -68,7 +68,7 @@ Screenshot
 Video
 -----
 
-[<img src="https://cms.skeeks.com/uploads/all/99/a6/ef/99a6ef3ff72cf285ebe3eb3cc9bb40b8.png" alt="Video" width="557"/>](https://youtu.be/VzXOuQMUI1c)
+[<img src="https://skeeks.com/uploads/all/cb/8e/85/cb8e8596a5ea8627897939dc241e40d4.png" alt="Video" width="557"/>](https://youtu.be/VzXOuQMUI1c)
 
 
 Links
