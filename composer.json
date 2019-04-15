@@ -29,7 +29,8 @@
 	"extra": {
         "config-plugin": {
             "console": [
-                "src/config/common.php"
+                "src/config/common.php",
+                "src/config/console.php"
             ],
             "web": [
                 "src/config/common.php",
