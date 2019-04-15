@@ -12,6 +12,7 @@ use skeeks\cms\i18nDb\models\Message;
 use skeeks\cms\i18nDb\models\SourceMessage;
 use skeeks\cms\models\CmsContentElement;
 use skeeks\cms\models\CmsContentProperty;
+use skeeks\cms\models\CmsTree;
 use yii\base\InvalidConfigException;
 use yii\console\Controller;
 use yii\helpers\Console;
@@ -81,6 +82,8 @@ class TranslateController extends Controller
 
     /**
      * Перевод свойств у элементов контента
+     *
+     * @throws \Exception
      */
     public function actionContentElements()
     {
@@ -94,43 +97,120 @@ class TranslateController extends Controller
 
         foreach ($query->each(100) as $cmsContentElement)
         {
-            $fields = $this->_getLangFielsForElement($model);
-            if (!$fields) {
-                $this->stdout("\t{$cmsContentElements->id} — no fields\n");
-                continue;
-            }
+            $this->stdout("\t{$cmsContentElement->id} — {$cmsContentElement->name}\n");
+            $rp = $cmsContentElement->relatedPropertiesModel;
+            $rpSave = false;
+            foreach (\Yii::$app->multiLanguage->langs as $lang)
+            {
+                $this->stdout("\t\t{$lang}\n");
+                foreach ($cmsContentElement->toArray() as $key => $value) {
+                    $attrName = $lang . \Yii::$app->multiLanguage->lang_delimetr . $key;
 
-            foreach ($cmsContentElement->toArray($fields) as $key => $value) {
-                if ($value = $model->relatedPropertiesModel->getAttribute($this->langPrefix.$key)) {
-                    $model->{$key} = $value;
-                }
-            }
-        }
-    }
+                    if ($rp->hasAttribute($attrName)) {
+                        if ($v = $rp->getAttribute($attrName)) {
+                            $this->stdout("\t\t\t{$attrName} — {$v}\n");
+                            continue;
+                        } elseif ($value) {
 
-
-    protected $_possible_fields_for_elements = null;
-
-    protected function _getLangFielsForElement(CmsContentElement $model)
-    {
-        if ($this->_possible_fields_for_elements === null) {
-            $fields = [];
-            /**
-             * @var CmsContentProperty $property
-             */
-            $allowAttributes = array_keys($model->toArray());
-            foreach (CmsContentProperty::find()->all() as $property) {
-                if ($property->code) {
-                    if (substr($property->code, 0, strlen($this->langPrefix)) == $this->langPrefix) {
-                        $fieldName = substr($property->code, strlen($this->langPrefix), strlen($property->code));
-                        $fields[] = $fieldName;
+                            if (in_array($key, ['name', 'meta_title', 'meta_keywords', 'meta_description'])) {
+                                $translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang);
+                                $rp->setAttribute($attrName, $translated);
+                                $rpSave = true;
+                                $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);
+                            } elseif (in_array($key, ['description_short', 'description_full'])) {
+                                /*$translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang, null, 'html');
+                                echo $translated;
+                                die;*/
+                                /*$rp->setAttribute($attrName, $translated);
+                                $rpSave = true;
+                                $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);*/
+                            } else {
+                                $this->stdout("\t\t\t{$attrName} — !!!\n", Console::FG_RED);
+                            }
+                            continue;
+                        } else {
+                            $this->stdout("\t\t\t{$attrName} — no source value!!!\n", Console::FG_RED);
+                        }
                     }
                 }
-
             }
 
-            $this->_possible_fields_for_elements = $fields;
+            if ($rpSave) {
+                if ($rp->save()) {
+                    $this->stdout("\tSaved\n", Console::FG_GREEN);
+                } else {
+                    $this->stdout("\tNot saved: " . print_r($rp->errors, true) . "\n", Console::FG_RED);
+                }
+            }
         }
-        return $this->_possible_fields_for_elements;
     }
+
+    /**
+     * Перевод свойств у элементов контента
+     *
+     * @throws \Exception
+     */
+    public function actionTree()
+    {
+        /**
+         * @var CmsTree $tree
+         */
+        $query = CmsTree::find();
+
+        $this->stdout("Total trees: " . $query->count() . "\n");
+        $this->stdout("Langs: " . print_r(\Yii::$app->multiLanguage->langs, true) . "\n");
+
+        foreach ($query->each(100) as $tree)
+        {
+            $this->stdout("\t{$tree->id} — {$tree->name}\n");
+            $rp = $tree->relatedPropertiesModel;
+            $rpSave = false;
+            foreach (\Yii::$app->multiLanguage->langs as $lang)
+            {
+                $this->stdout("\t\t{$lang}\n");
+                foreach ($tree->toArray() as $key => $value) {
+                    $attrName = $lang . \Yii::$app->multiLanguage->lang_delimetr . $key;
+
+                    if ($rp->hasAttribute($attrName)) {
+                        $v = $rp->getAttribute($attrName);
+                        /*var_dump($attrName);
+                        var_dump($v);*/
+                        if ($v) {
+                            $this->stdout("\t\t\t{$attrName} — {$v}\n");
+                            continue;
+                        } elseif ($value) {
+
+                            if (in_array($key, ['name', 'meta_title', 'meta_keywords', 'meta_description'])) {
+                                $translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang);
+                                $rp->setAttribute($attrName, $translated);
+                                $rpSave = true;
+                                $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);
+                            } elseif (in_array($key, ['description_short', 'description_full'])) {
+                                /*$translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang, null, 'html');
+                                echo $translated;
+                                die;*/
+                                /*$rp->setAttribute($attrName, $translated);
+                                $rpSave = true;
+                                $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);*/
+                            } else {
+                                $this->stdout("\t\t\t{$attrName} — !!!\n", Console::FG_RED);
+                            }
+                            continue;
+                        } else {
+                            $this->stdout("\t\t\t{$attrName} — no source value!!!\n", Console::FG_RED);
+                        }
+                    }
+                }
+            }
+
+            if ($rpSave) {
+                if ($rp->save()) {
+                    $this->stdout("\tSaved\n", Console::FG_GREEN);
+                } else {
+                    $this->stdout("\tNot saved: " . print_r($rp->errors, true) . "\n", Console::FG_RED);
+                }
+            }
+        }
+    }
+
 }
