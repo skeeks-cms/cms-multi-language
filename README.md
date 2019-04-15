@@ -1,7 +1,7 @@
 Component for multilingual site on SkeekS CMS
 ================
 
-[<img src="https://cms.skeeks.com/uploads/all/29/f5/4c/29f54c4158650aaf265a69d37fb6e86c.jpeg" alt="SkeekS blog" width="200"/>](https://cms.skeeks.com/marketplace/components/tools/406-skeeks-komponent-dlya-multiyazychnosti-sajta)
+[<img src="https://cms.skeeks.com/uploads/all/29/f5/4c/29f54c4158650aaf265a69d37fb6e86c.jpeg" alt="SkeekS blog" width="200"/>](https://cms.skeeks.com/blog/407-kak-perevesti-sajt-postroennyj-na-skeeks-cms-na-raznye-yazyki)
 
 [![Latest Stable Version](https://poser.pugx.org/skeeks/cms-multi-language/v/stable.png)](https://packagist.org/packages/skeeks/cms-multi-language)
 [![Total Downloads](https://poser.pugx.org/skeeks/cms-multi-language/downloads.png)](https://packagist.org/packages/skeeks/cms-multi-language)
@@ -11,7 +11,7 @@ Installation
 ------------
 
 ```sh
-$ composer require skeeks/cms-multi-language "^0.0.2"
+$ composer require skeeks/cms-multi-language "^0.0.3"
 ```
 
 Or add this to your `composer.json` file:
@@ -19,7 +19,7 @@ Or add this to your `composer.json` file:
 ```json
 {
     "require": {
-        "skeeks/cms-multi-language": "^0.0.2"
+        "skeeks/cms-multi-language": "^0.0.3"
     }
 }
 ```
@@ -75,9 +75,8 @@ Links
 * [Changelog](https://github.com/skeeks-cms/cms-multi-language/blob/master/CHANGELOG.md)
 * [Issues](https://github.com/skeeks-cms/cms-multi-language/issues)
 * [Packagist](https://packagist.org/packages/skeeks/cms-multi-language)
-
-* [SkeekS blog post](https://skeeks.com/blog/programming/397-kak-preobrazovat-neaktivnye-ssylki-v-tekste-v-aktivnye-klikabelnye)
-* [SkeekS marketplace](https://cms.skeeks.com/marketplace/components/tools/other/396-preobrazovanie-neaktivnyh-ssylok-v-tekste)
+* [SkeekS blog post](https://cms.skeeks.com/blog/407-kak-perevesti-sajt-postroennyj-na-skeeks-cms-na-raznye-yazyki)
+* [SkeekS marketplace](https://cms.skeeks.com/marketplace/components/tools/406-skeeks-komponent-dlya-multiyazychnosti-sajta)
 
 ___
 
