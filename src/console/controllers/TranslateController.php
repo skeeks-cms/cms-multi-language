@@ -73,7 +73,7 @@ class TranslateController extends Controller
                     }
 
                 } else {
-                    $this->stdout("\t\t{$lang} — translated");
+                    $this->stdout("\t\t{$lang} — translated\n");
                 }
             }
 
