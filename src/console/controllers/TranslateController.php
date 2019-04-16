@@ -8,6 +8,7 @@
 
 namespace skeeks\cms\multiLanguage\console\controllers;
 
+use skeeks\cms\helpers\StringHelper;
 use skeeks\cms\i18nDb\models\Message;
 use skeeks\cms\i18nDb\models\SourceMessage;
 use skeeks\cms\models\CmsContentElement;
@@ -118,9 +119,15 @@ class TranslateController extends Controller
                                 $rpSave = true;
                                 $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);
                             } elseif (in_array($key, ['description_short', 'description_full'])) {
-                                /*$translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang, null, 'html');
-                                echo $translated;
-                                die;*/
+                                //$translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang, null, 'html');
+                                if (StringHelper::strlen($value) < 1500) {
+                                    $this->stdout("\t\t\t\t" . StringHelper::strlen($value) . "\n");
+                                    $translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang, null, 'html');
+                                    $rp->setAttribute($attrName, $translated);
+                                    $rpSave = true;
+                                    $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);
+                                }
+
                                 /*$rp->setAttribute($attrName, $translated);
                                 $rpSave = true;
                                 $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);*/
@@ -186,12 +193,15 @@ class TranslateController extends Controller
                                 $rpSave = true;
                                 $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);
                             } elseif (in_array($key, ['description_short', 'description_full'])) {
-                                /*$translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang, null, 'html');
-                                echo $translated;
-                                die;*/
-                                /*$rp->setAttribute($attrName, $translated);
-                                $rpSave = true;
-                                $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);*/
+
+                                if (StringHelper::strlen($value) < 1500) {
+                                    $this->stdout("\t\t\t\t" . StringHelper::strlen($value) . "\n");
+                                    $translated = \Yii::$app->googleApi->serviceTranslate->translate($value, $lang, null, 'html');
+                                    $rp->setAttribute($attrName, $translated);
+                                    $rpSave = true;
+                                    $this->stdout("\t\t\t{$attrName} — {$translated} (new)\n", Console::FG_GREEN);
+                                }
+
                             } else {
                                 $this->stdout("\t\t\t{$attrName} — !!!\n", Console::FG_RED);
                             }
