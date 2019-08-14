@@ -41,7 +41,7 @@ CSS
 <? /* if ($this->beginCache('app-language', ['variations' => [Yii::$app->language]])) : */ ?>
 <div class="sx-select-language" style="overflow: hidden;">
     <ul class="row">
-        <? foreach (\Yii::$app->multiLanguage->cmsLangs as $cmsLang) : ?>
+        <? foreach (\Yii::$app->multiLanguage->getCmsLangs()->w as $cmsLang) : ?>
 
             <?
                 $name = \skeeks\cms\helpers\StringHelper::ucfirst( $cmsLang->name ); //Испходное название языка
@@ -60,7 +60,7 @@ CSS
                 }
             ?>
 
-            <li class="col-sm-6">
+            <li class="col-sm-4">
                 <?
                 $urlData = [];
                 $params = \Yii::$app->request->getQueryParams();

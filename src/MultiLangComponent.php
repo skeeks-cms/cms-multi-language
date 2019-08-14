@@ -162,7 +162,7 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
     public function getCmsLangs()
     {
         if ($this->_cms_langs === null) {
-            $this->_cms_langs = CmsLang::find()->active()->all();
+            $this->_cms_langs = CmsLang::find()->with('image')->active()->all();
         }
 
         return $this->_cms_langs;
