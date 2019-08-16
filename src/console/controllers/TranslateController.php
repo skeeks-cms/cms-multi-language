@@ -83,7 +83,6 @@ class TranslateController extends Controller
 
     /**
      * Перевод свойств у элементов контента
-     *
      * @throws \Exception
      */
     public function actionContentElements()
@@ -154,7 +153,6 @@ class TranslateController extends Controller
 
     /**
      * Перевод свойств у элементов контента
-     *
      * @throws \Exception
      */
     public function actionTree()
