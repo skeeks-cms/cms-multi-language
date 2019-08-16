@@ -41,7 +41,7 @@ CSS
 <? /* if ($this->beginCache('app-language', ['variations' => [Yii::$app->language]])) : */ ?>
 <div class="sx-select-language" style="overflow: hidden;">
     <ul class="row">
-        <? foreach (\Yii::$app->multiLanguage->getCmsLangs()->w as $cmsLang) : ?>
+        <? foreach (\Yii::$app->multiLanguage->getCmsLangs() as $cmsLang) : ?>
 
             <?
                 $name = \skeeks\cms\helpers\StringHelper::ucfirst( $cmsLang->name ); //Испходное название языка
