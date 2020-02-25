@@ -22,6 +22,8 @@ use yii\web\Cookie;
  */
 class DetectLanguage extends Widget
 {
+    static public $autoIdPrefix = "detectLang";
+
     /**
      * @var string
      */
