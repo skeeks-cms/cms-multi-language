@@ -51,11 +51,13 @@ class DetectLanguage extends Widget
     }
 
     /**
+     * @deprecated 
      * @return bool
      */
     public function getIsSavedLanguage()
     {
-        return isset(\Yii::$app->request->cookies[$this->cookieName]);
+        return isset($_COOKIE[$this->cookieName]);
+        //return isset(\Yii::$app->request->cookies[$this->cookieName]);
     }
 
     /**
@@ -73,7 +75,7 @@ class DetectLanguage extends Widget
         $options = [];
 
         $options['preferredLanguage'] = $this->preferredLanguage;
-        $options['isSavedLanguage'] = $this->isSavedLanguage;
+        //$options['isSavedLanguage'] = $this->isSavedLanguage;
         $options['isDifferent'] = $this->isDifferent;
         $options['showDelay'] = $this->showDelay;
         $options['appLanguage'] = \Yii::$app->language;
@@ -88,7 +90,7 @@ JS
         );
 
         //Язык еще не сохраняли?
-        if (!$this->isSavedLanguage) {
+        /*if (!$this->isSavedLanguage) {
             $languageCookie = new Cookie([
                 'name'   => $this->cookieName,
                 'value'  => \Yii::$app->language,
@@ -96,8 +98,10 @@ JS
                 //'expire' => time() + 60 * 60 * 24 * 30, // 30 days
                 'expire' => (int)\Yii::$app->formatter->asTimestamp(time()) + $this->expire, // 30 days
             ]);
+            //print_r($languageCookie);
             \Yii::$app->response->cookies->add($languageCookie);
-        }
+            //print_r(\Yii::$app->request->cookies);die;
+        }*/
 
         return $this->render($this->viewFile);
     }

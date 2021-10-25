@@ -8,6 +8,10 @@
 {
     sx.classes.LanguageDetector = sx.classes.Component.extend({
 
+        _init: function() {
+            this.Cookie = new sx.classes.Cookie("LanguageDetector");
+        },
+        
         _onDomReady: function()
         {
             var self = this;
@@ -20,10 +24,15 @@
 
         execute: function()
         {
-            if (this.get('isDifferent') && !this.get('isSavedLanguage'))
-            {
-                this.showDialog();
+            //Язык еще не сохраняли
+            if (!this.Cookie.get("language")) {
+                if (this.get('isDifferent'))
+                {
+                    this.showDialog();
+                }
             }
+            //Сразу сохраняем язык приложения
+            this.Cookie.set("language", this.get("appLanguage"));
         },
 
         showDialog: function()
