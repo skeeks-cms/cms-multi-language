@@ -15,6 +15,7 @@ use skeeks\cms\models\CmsLang;
 use skeeks\cms\models\CmsTreeTypeProperty;
 use skeeks\cms\models\Tree;
 use skeeks\cms\multiLanguage\widgets\detectLanguage\DetectLanguage;
+use skeeks\cms\mysqlSession\DbSession;
 use skeeks\modules\cms\form2\models\Form2FormProperty;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
@@ -33,6 +34,11 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
      * @var Подключить скрипт автоопределения языка пользователя?
      */
     public $isRenderDetectWidget = true;
+
+    /**
+     * @var bool Автоматически перенаправлять на определенный язык и сохранять эти данные в сессию
+     */
+    public $isRedirectToDetect = true;
 
     /**
      *
@@ -124,6 +130,38 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
             });
 
             $application->view->on(View::EVENT_END_BODY, function (Event $e) {
+                //Перенаправить пользователя на нужный язык
+                if ($this->isRedirectToDetect) {
+
+                    if (\Yii::$app->session instanceof DbSession) {
+                        if (!\Yii::$app->session->isBot()) {
+                            //Если это первый переход на сайт определяем лучший язык и сохраняем
+                            if (!\Yii::$app->session->get("LANG_DETECT")) {
+                                $preferedLanguage = \Yii::$app->request->getPreferredLanguage(array_keys(\Yii::$app->cms->languages));
+                                \Yii::$app->session->set("LANG_DETECT", $preferedLanguage);
+                                if (\Yii::$app->language != $preferedLanguage) {
+
+                                    $urlData = [];
+                                    $params = \Yii::$app->request->getQueryParams();
+                                    if ($params) {
+                                        $params = \yii\helpers\ArrayHelper::merge($params, ['lang' => $preferedLanguage]);
+                                    } else {
+                                        $params = \yii\helpers\ArrayHelper::merge([], ['lang' => $preferedLanguage]);
+                                    }
+                                    $route = \Yii::$app->requestedRoute;
+                                    $urlData = ["/".$route];
+
+                                    $urlData = \yii\helpers\ArrayHelper::merge($urlData, $params);
+                                    \Yii::$app->response->redirect(\yii\helpers\Url::to($urlData));
+                                    \Yii::$app->end();
+
+                                }
+                            }
+                        }
+                    }
+
+                }
+
                 if ($this->isRenderDetectWidget) {
                     echo DetectLanguage::widget();
                 }
