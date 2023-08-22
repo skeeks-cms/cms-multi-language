@@ -17,6 +17,7 @@ use skeeks\cms\models\Tree;
 use skeeks\cms\multiLanguage\widgets\detectLanguage\DetectLanguage;
 use skeeks\cms\mysqlSession\DbSession;
 use skeeks\modules\cms\form2\models\Form2FormProperty;
+use skeeks\yii2\multiLanguage\MultiLangRequest;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
 use yii\web\Application;
@@ -137,7 +138,23 @@ class MultiLangComponent extends \skeeks\yii2\multiLanguage\MultiLangComponent i
                         if (!\Yii::$app->session->isBot()) {
                             //Если это первый переход на сайт определяем лучший язык и сохраняем
                             if (!\Yii::$app->session->get("LANG_DETECT")) {
-                                $preferedLanguage = \Yii::$app->request->getPreferredLanguage(array_keys(\Yii::$app->cms->languages));
+
+                                $preferedLanguage = null;
+                                if (\Yii::$app->request instanceof MultiLangRequest) {
+
+                                    //В url содержится указание языка
+                                    \Yii::$app->request->getUrl();
+                                    $langFromUrl = \Yii::$app->request->getLangFromUrl();
+                                    if ($langFromUrl) {
+                                        $preferedLanguage = $langFromUrl;
+                                    }
+                                }
+
+                                if ($preferedLanguage === null) {
+                                    $preferedLanguage = \Yii::$app->request->getPreferredLanguage(array_keys(\Yii::$app->cms->languages));
+                                }
+
+
                                 \Yii::$app->session->set("LANG_DETECT", $preferedLanguage);
                                 if (\Yii::$app->language != $preferedLanguage) {
 
